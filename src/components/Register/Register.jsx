@@ -2,10 +2,12 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import auth from './../../firebase/firebase.config';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function Register() {
     const [regError, setRegError]=useState('')
     const [success, setSuccess]=useState('')
+    const [showPass, setShowPass]=useState(false)
 
     const handleSubmit=e=>{
         e.preventDefault()
@@ -15,6 +17,10 @@ export default function Register() {
         console.log(name, email, password)
         setRegError('')
         setSuccess('')
+        if(password.length < 6){
+            setRegError('Please 6 Character')
+            return
+        }
 
         createUserWithEmailAndPassword(auth, email,password)
         .then(result =>{
@@ -41,12 +47,14 @@ export default function Register() {
                     <div className="mb-4 relative border">
                         <input
                             className="w-full py-2 px-4"
-                            
-                            name="password"
+                            type={showPass?'text':'password'}                          
+                            name='password'
                             placeholder="Password"
                             id="" required />
-                        <span className="absolute top-3 right-2">
-                            
+                        <span onClick={()=>setShowPass(!showPass)} className="absolute top-3 right-2">
+                        {
+                            showPass? <FaEyeSlash />:<FaEye />
+                        }
 
                         </span>
                     </div>
