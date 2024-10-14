@@ -14,12 +14,15 @@ export default function Register() {
         const name=e.target.name.value
         const email=e.target.email.value
         const password=e.target.password.value
+        const accepted=e.target.terms.checked
         console.log(name, email, password)
         setRegError('')
         setSuccess('')
         if(password.length < 6){
             setRegError('Please 6 Character')
             return
+        }else if(!accepted){
+            setRegError('Not accepted terms and condition')
         }
 
         createUserWithEmailAndPassword(auth, email,password)
