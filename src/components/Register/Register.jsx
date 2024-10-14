@@ -1,12 +1,31 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
+import auth from './../../firebase/firebase.config';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+
 export default function Register() {
+    const [regError, setRegError]=useState('')
+    const [success, setSuccess]=useState('')
+
     const handleSubmit=e=>{
         e.preventDefault()
         const name=e.target.name.value
         const email=e.target.email.value
         const password=e.target.password.value
         console.log(name, email, password)
+        setRegError('')
+        setSuccess('')
+
+        createUserWithEmailAndPassword(auth, email,password)
+        .then(result =>{
+            const loggedUser=result.user
+            console.log(loggedUser)
+            setSuccess('Successfull')
+        })
+        .catch(error=>{
+            console.log(error.message)
+            setRegError(error.message)
+        })
     }
   return (
     <div>
@@ -38,7 +57,14 @@ export default function Register() {
                     </div>
                     <br />
                     <input className="btn btn-secondary mb-4 w-full" type="submit" value="Register" />
+
                 </form>
+                {
+                    success && <p className='text-red-600 text-4xl'>{success}</p>
+                }
+                {
+                    regError && <p className='text-red-600 text-4xl'>{regError}</p>
+                }
                 
                 <p>Already have an account? Please <Link to="/login">Login</Link></p>
             </div>
