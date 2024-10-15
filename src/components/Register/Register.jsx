@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import auth from './../../firebase/firebase.config';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function Register() {
@@ -9,7 +9,7 @@ export default function Register() {
     const [success, setSuccess]=useState('')
     const [showPass, setShowPass]=useState(false)
 
-    const handleSubmit=e=>{
+    const handleRegister=e=>{
         e.preventDefault()
         const name=e.target.name.value
         const email=e.target.email.value
@@ -30,6 +30,12 @@ export default function Register() {
             const loggedUser=result.user
             console.log(loggedUser)
             setSuccess('Successfull')
+
+            // email verification
+            sendEmailVerification(loggedUser)
+            .then(()=>{
+                alert('please verify your email')
+            })
         })
         .catch(error=>{
             console.log(error.message)
@@ -42,7 +48,7 @@ export default function Register() {
         <div className="">
             <div className="mx-auto md:w-1/2">
                 <h2 className="text-3xl mb-8">Please Register</h2>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleRegister}>
                     <input className="mb-4 w-full  py-2 px-4" type="text" name="name" placeholder="Your Name" id="" required />
                     <br />
                     <input className="mb-4 w-full  py-2 px-4" type="email" name="email" placeholder="Email Address" id="" required />
