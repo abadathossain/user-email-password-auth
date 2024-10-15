@@ -1,34 +1,51 @@
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import React, { useState } from 'react'
+import { sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth';
+import React, { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import auth from '../../firebase/firebase.config';
 
 export default function Login() {
-  const [regError, setRegError]=useState('')
-    const [success, setSuccess]=useState('')
+  const [regError, setRegError] = useState('')
+  const [success, setSuccess] = useState('')
+  const emailRef = useRef(null)
 
- const handleLogin = e => {
-        e.preventDefault();
-        const email = e.target.email.value;
-        const password = e.target.password.value;
-        console.log(email, password);
+  const handleLogin = e => {
+    e.preventDefault();
+    const email = e.target.email.value;
+    const password = e.target.password.value;
+    console.log(email, password);
 
-        setRegError('')
-        setSuccess('')
+    setRegError('')
+    setSuccess('')
 
-        signInWithEmailAndPassword(auth, email, password)
-        .then(result=>{
-          const loggedUser=result.user
-          console.log(loggedUser)
-          setRegError('successfully login')
-        })
-        .catch(error=>{
-          console.log(error)
-          setRegError(error.message)
+    signInWithEmailAndPassword(auth, email, password)
+      .then(result => {
+        const loggedUser = result.user
+        console.log(loggedUser)
+        setRegError('successfully login')
+      })
+      .catch(error => {
+        console.log(error)
+        setRegError(error.message)
 
-        }
-          )
+      }
+      )
+  }
 
+  const handleForgotPassword = () => {
+    const email = emailRef.current.value;
+    // console.log('hellll',emailRef.current.value)
+
+    if (!email) {
+      console.log('send reset email',emailRef.current.value)
+      return
+    }
+    sendPasswordResetEmail(auth, email)
+      .then(() => {
+        alert('Checked mail')
+      })
+      .catch(error => {
+        console.log(error)
+      })
   }
 
   return (
@@ -48,7 +65,7 @@ export default function Login() {
                 <input
                   type="text"
                   name="email"
-
+                  ref={emailRef}
                   placeholder="email"
                   className="input input-bordered" />
               </div>
@@ -58,7 +75,7 @@ export default function Login() {
                 </label>
                 <input type="password" name="password" placeholder="password" className="input input-bordered" />
                 <label className="label">
-                  <a href="#" className="label-text-alt link link-hover">Forgot password?</a>
+                  <a onClick={handleForgotPassword} href="#" className="label-text-alt link link-hover">Forgot password?</a>
                 </label>
               </div>
               <div className="form-control mt-6">
